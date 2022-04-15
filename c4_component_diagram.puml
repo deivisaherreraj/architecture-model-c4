@@ -39,7 +39,7 @@ System_Boundary(apiManagement, "API Management Platform") {
 System_Boundary(dbStore, "Data Store") {    
     ContainerDb(db, "Relational Database", "Microsoft SQL", "Contiene información de los clientes, técnicos.", $sprite="microsoftsqlserver_wordmark")
     ContainerDb(dbmongo, "NoSQL Data Store", "MongoDB", "Contiene historial y planes de los clientes.", $sprite="mongodb_wordmark")
-    Container(fileSytem, "File System", "FAT32", "Sistema para el manejo y administracion de archivos.", $sprite="server")
+    Container(fileSytem, "File System", "Amazon Elastic File System", "Sistema para el manejo y administracion de archivos.", $sprite="server")
 }
 
 Rel(web_app, identity, "Usar", "https")
