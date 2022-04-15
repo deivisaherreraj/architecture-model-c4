@@ -1,0 +1,50 @@
+@startuml Diagrama de Contexto
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS_2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+
+!include DEVICONS/angular.puml
+!include DEVICONS/android.puml
+!include DEVICONS_2/dotnetcore.puml
+
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/user_tie.puml
+!include FONTAWESOME/users_cog.puml
+!include FONTAWESOME/viber.puml
+!include FONTAWESOME/envelope_open_text.puml
+
+Person(user, "Clientes", "Cliente que requiere soporte tecnico", $sprite="users")
+Person(adviser, "Asesores", "Personal que realiza la gestión de llamadas de soporte técnico", $sprite="user_tie")
+Person(technical, "Técnicos", "Personal que realiza el soporte técnico informado", $sprite="users_cog")
+
+System_Boundary(app, "Software System") {
+    Container(web_app, "Web Application", "C#, NET Core 5.0 DDD", "La interfaz principal con la que interactua el cliente", $sprite="angular")
+    Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "La interfaz móvil que interactua tanto el cliente como asesor", $sprite="android")
+    Container(admin_app, "Administrative System", "angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
+}
+
+System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura")
+
+Container(api, "API REST", "C#, NET Core 5.0 DDD", "Maneja toda la lógica de negocios", $sprite="dotnetcore")
+Container(notification, "Notificación", "Software System", "Sistema que notifica los soportes como las asignaciones", $sprite="envelope_open_text")
+
+Rel(user, web_app, "Usar", "https")
+Rel(user, mobile_app, "Usar", "https")
+
+Rel(adviser, mobile_app, "Gestión", "https")
+Rel(adviser, admin_app, "Gestión", "https")
+
+Rel(web_app, identity, "Usar", "https")
+Rel(mobile_app, identity, "Usar", "https")
+Rel(admin_app, identity, "Usar", "https")
+
+Rel(identity, api, "Autentificación por token", "https")
+
+Rel_R(api, notification, "Usar el sistema de email")
+
+Rel_R(notification, technical, "Notificar asignación")
+
+@enduml
