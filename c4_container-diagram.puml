@@ -1,0 +1,87 @@
+@startuml Diagrama de Contenedor
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS_2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+
+!include DEVICONS/angular.puml
+!include DEVICONS/android.puml
+!include DEVICONS_2/dotnetcore.puml
+
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/user_tie.puml
+!include FONTAWESOME/users_cog.puml
+!include FONTAWESOME/viber.puml
+!include FONTAWESOME/envelope_open_text.puml
+
+Person(user, "Clientes", "Cliente que requiere soporte tecnico", $sprite="users")
+Person(adviser, "Asesores", "Personal que realiza la gestión de llamadas de soporte técnico", $sprite="user_tie")
+Person(technical, "Técnicos", "Personal que realiza el soporte técnico informado", $sprite="users_cog")
+
+
+System_Boundary(aws, "AWS cloud US - West 2") {
+    Container(aws_waf, "AWS WAF", "Web Application Firewall", "Firewall para aplicaciones web ", $sprite="img:./icons/WAF.png{scale=0.2}")
+    Container(aws_cloudfront, "Amazon CloudFront", "Servicio de red de entrega de contenido (CDN)", $sprite="img:./icons/CloudFront.png{scale=0.2}")
+}
+
+System_Boundary(amazon_cloudfront, "Amazon CloudFront") {
+    Container(web_app, "Web Application", "C#, NET Core 5.0 DDD", "La interfaz principal con la que interactua el cliente", $sprite="angular")
+    Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "La interfaz móvil que interactua tanto el cliente como asesor", $sprite="android")
+    Container(admin_app, "Administrative System", "angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
+}
+
+System_Boundary(aws_vpc, "Amazon Virtual Private Cloud") {
+    System_Boundary(aws_eks, "Amazon Elastic Kubernetes Service") {
+        Container(aws_alb, "Elastic Load Balancing", "Distribuye automáticamente el tráfico entrante entre varios destinos", $sprite="img:./icons/alb.png{scale=0.2}")
+        System_Boundary(aws_zd, "Zona de Disponibilidad 1") {
+            System_Boundary(aws_gateway, "Nat Gateway") {
+                Container(aws_ec2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.svg{scale=0.2}")
+                Container(aws_rds, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.svg{scale=0.4}")
+            }
+        }
+        System_Boundary(aws_zd2, "Zona de Disponibilidad 2") {
+            System_Boundary(aws_gateway_d2, "Nat Gateway") {
+                Container(aws_ec2_d2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.svg{scale=0.2}")
+                Container(aws_rds_d2, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.svg{scale=0.4}")
+            }
+        }
+    }
+}
+
+System_Boundary(amazon_ec2, "Nodos Cubernetes") {
+    System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura")
+    Container(api, "API REST", "C#, NET Core 5.0 DDD", "Maneja toda la lógica de negocios", $sprite="dotnetcore")
+    Container(notification, "Notificación", "Software System", "Sistema que notifica los soportes como las asignaciones", $sprite="envelope_open_text")
+
+}
+
+
+Rel(user, aws_waf, "Usar", "https")
+Rel(adviser, aws_waf, "Usar", "https")
+Rel(technical, aws_waf, "Usar", "https")
+
+Rel(aws_waf, aws_cloudfront, "Usar", "")
+
+Rel(aws_cloudfront, amazon_cloudfront, "contiene", "")
+
+Rel_R(aws_cloudfront, aws_alb, "", "")
+
+Rel(aws_alb, aws_ec2, "", "")
+Rel(aws_alb, aws_ec2_d2, "", "")
+
+Rel_R(aws_ec2, aws_rds, "", "")
+Rel_R(aws_ec2_d2, aws_rds_d2, "", "")
+
+Rel(aws_ec2, amazon_ec2, "contiene", "")
+Rel(aws_ec2_d2, amazon_ec2, "contiene", "")
+
+
+
+Rel(identity, api, "Autentificación por token", "https")
+
+Rel_R(api, notification, "Usar el sistema de email")
+
+
+@enduml
