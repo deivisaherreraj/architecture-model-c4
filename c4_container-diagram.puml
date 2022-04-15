@@ -37,14 +37,14 @@ System_Boundary(aws_vpc, "Amazon Virtual Private Cloud") {
         Container(aws_alb, "Elastic Load Balancing", "Distribuye automáticamente el tráfico entrante entre varios destinos", $sprite="img:./icons/alb.png{scale=0.2}")
         System_Boundary(aws_zd, "Zona de Disponibilidad 1") {
             System_Boundary(aws_gateway, "Nat Gateway") {
-                Container(aws_ec2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.svg{scale=0.2}")
-                Container(aws_rds, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.svg{scale=0.4}")
+                Container(aws_ec2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.png{scale=1}")
+                Container(aws_rds, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.png{scale=1}")
             }
         }
         System_Boundary(aws_zd2, "Zona de Disponibilidad 2") {
             System_Boundary(aws_gateway_d2, "Nat Gateway") {
-                Container(aws_ec2_d2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.svg{scale=0.2}")
-                Container(aws_rds_d2, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.svg{scale=0.4}")
+                Container(aws_ec2_d2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.png{scale=1}")
+                Container(aws_rds_d2, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.png{scale=1}")
             }
         }
     }
