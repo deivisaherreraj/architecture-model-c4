@@ -5,6 +5,7 @@
 !define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
 !define DEVICONS_2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
 !define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
 
 !include DEVICONS/angular.puml
 !include DEVICONS/android.puml
@@ -15,6 +16,8 @@
 !include FONTAWESOME/users_cog.puml
 !include FONTAWESOME/viber.puml
 !include FONTAWESOME/envelope_open_text.puml
+
+!include MATERIAL/https.puml
 
 Person(user, "Clientes", "Cliente que requiere soporte tecnico", $sprite="users")
 Person(adviser, "Asesores", "Personal que realiza la gestión de llamadas de soporte técnico", $sprite="user_tie")
@@ -27,9 +30,9 @@ System_Boundary(aws, "AWS cloud US - West 2") {
 }
 
 System_Boundary(amazon_cloudfront, "Amazon CloudFront") {
-    Container(web_app, "Web Application", "C#, NET Core 5.0 DDD", "La interfaz principal con la que interactua el cliente", $sprite="angular")
+    Container(web_app, "Web Application", "TypeScript/Angular", "La interfaz principal con la que interactua el cliente", $sprite="angular")
     Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "La interfaz móvil que interactua tanto el cliente como asesor", $sprite="android")
-    Container(admin_app, "Administrative System", "angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
+    Container(admin_app, "Administrative System", "TypeScript/Angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
 }
 
 System_Boundary(aws_vpc, "Amazon Virtual Private Cloud") {
@@ -51,7 +54,7 @@ System_Boundary(aws_vpc, "Amazon Virtual Private Cloud") {
 }
 
 System_Boundary(amazon_ec2, "Nodos Cubernetes") {
-    System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura")
+    System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura", $sprite="https")
     Container(api, "API REST", "C#, NET Core 5.0 DDD", "Maneja toda la lógica de negocios", $sprite="dotnetcore")
     Container(notification, "Notificación", "Software System", "Sistema que notifica los soportes como las asignaciones", $sprite="envelope_open_text")
 

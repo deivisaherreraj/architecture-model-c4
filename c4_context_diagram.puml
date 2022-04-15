@@ -5,6 +5,7 @@
 !define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
 !define DEVICONS_2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
 !define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
 
 !include DEVICONS/angular.puml
 !include DEVICONS/android.puml
@@ -16,17 +17,19 @@
 !include FONTAWESOME/viber.puml
 !include FONTAWESOME/envelope_open_text.puml
 
+!include MATERIAL/https.puml
+
 Person(user, "Clientes", "Cliente que requiere soporte tecnico", $sprite="users")
 Person(adviser, "Asesores", "Personal que realiza la gestión de llamadas de soporte técnico", $sprite="user_tie")
 Person(technical, "Técnicos", "Personal que realiza el soporte técnico informado", $sprite="users_cog")
 
-System_Boundary(app, "Software System") {
-    Container(web_app, "Web Application", "C#, NET Core 5.0 DDD", "La interfaz principal con la que interactua el cliente", $sprite="angular")
+System_Boundary(app, "Apps") {
+    Container(web_app, "Web Application", "TypeScript/Angular", "La interfaz principal con la que interactua el cliente", $sprite="angular")
     Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "La interfaz móvil que interactua tanto el cliente como asesor", $sprite="android")
-    Container(admin_app, "Administrative System", "angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
+    Container(admin_app, "Administrative System", "TypeScript/Angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
 }
 
-System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura")
+System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura", $sprite="https")
 
 Container(api, "API REST", "C#, NET Core 5.0 DDD", "Maneja toda la lógica de negocios", $sprite="dotnetcore")
 Container(notification, "Notificación", "Software System", "Sistema que notifica los soportes como las asignaciones", $sprite="envelope_open_text")
@@ -45,6 +48,7 @@ Rel(identity, api, "Autentificación por token", "https")
 
 Rel_R(api, notification, "Usar el sistema de email")
 
+Rel_R(notification, user, "Notificar")
 Rel_R(notification, technical, "Notificar asignación")
 
 @enduml
