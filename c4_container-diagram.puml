@@ -42,12 +42,14 @@ System_Boundary(aws_vpc, "Amazon Virtual Private Cloud") {
             System_Boundary(aws_gateway, "Nat Gateway") {
                 Container(aws_ec2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.png{scale=1}")
                 Container(aws_rds, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.png{scale=1}")
+                Container(aws_efs, "Amazon EFS", $sprite="img:./icons/efs.png{scale=0.2}")
             }
         }
         System_Boundary(aws_zd2, "Zona de Disponibilidad 2") {
             System_Boundary(aws_gateway_d2, "Nat Gateway") {
                 Container(aws_ec2_d2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.png{scale=1}")
                 Container(aws_rds_d2, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.png{scale=1}")
+                Container(aws_efs_d2, "Amazon EFS", $sprite="img:./icons/efs.png{scale=0.2}")
             }
         }
     }
@@ -75,10 +77,12 @@ Rel(aws_alb, aws_ec2, "", "")
 Rel(aws_alb, aws_ec2_d2, "", "")
 
 Rel_R(aws_ec2, aws_rds, "", "")
+Rel(aws_ec2, aws_efs, "", "")
 Rel_R(aws_ec2_d2, aws_rds_d2, "", "")
+Rel(aws_ec2_d2, aws_efs_d2, "", "")
 
-Rel(aws_ec2, amazon_ec2, "contiene", "")
-Rel(aws_ec2_d2, amazon_ec2, "contiene", "")
+Rel_R(aws_ec2, amazon_ec2, "contiene", "")
+Rel_R(aws_ec2_d2, amazon_ec2, "contiene", "")
 
 
 
