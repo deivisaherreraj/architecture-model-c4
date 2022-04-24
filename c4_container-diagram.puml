@@ -26,69 +26,115 @@ Person(technical, "Técnicos", "Personal que realiza el soporte técnico informa
 
 System_Boundary(aws, "AWS cloud US - West 2") {
     Container(aws_waf, "AWS WAF", "Web Application Firewall", "Firewall para aplicaciones web ", $sprite="img:./icons/WAF.png{scale=0.2}")
+    Container(aws_connect, "Call Center", "Amazon Connect", "Servicio como centro de contacto para las gestión de llamadas y contacto por chat y voz.", $sprite="img:./icons/AmazonConnect.png{scale=0.03}")
     Container(aws_cloudfront, "Amazon CloudFront", "Servicio de red de entrega de contenido (CDN)", $sprite="img:./icons/CloudFront.png{scale=0.2}")
+
+    System_Boundary(amazon_cloudfront, "Amazon CloudFront") {
+        Container(web_app, "Single-Page Application", "TypeScript, Angular, NodeJS", "Proporciona la funcionalidad para la gestión tanto a los clientes, asesores y tecnicos.", $sprite="angular")
+        Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "Proporciona la funcionalidad para la gestión tanto a los clientes, asesores y tecnicos.", $sprite="android")
+    }
+
 }
 
-System_Boundary(amazon_cloudfront, "Amazon CloudFront") {
-    Container(web_app, "Web Application", "TypeScript/Angular", "La interfaz principal con la que interactua el cliente", $sprite="angular")
-    Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "La interfaz móvil que interactua tanto el cliente como asesor", $sprite="android")
-    Container(admin_app, "Administrative System", "TypeScript/Angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
-}
-
-System_Boundary(aws_vpc, "Amazon Virtual Private Cloud") {
-    System_Boundary(aws_eks, "Amazon Elastic Kubernetes Service") {
+System_Boundary(aws_vpc, "Amazon Virtual Private Cloud \n'(Amazon VPC) le brinda control total sobre su entorno \nde redes virtuales, incluidas la ubicación de los \nrecursos, la conectividad y la seguridad.'") {
+    System_Boundary(aws_eks, "Amazon Elastic Kubernetes Service \n'(Amazon EKS) es un servicio de contenedores administrado para ejecutar \ny escalar aplicaciones Kubernetes en la nube o en las instalaciones.'") {
         Container(aws_alb, "Elastic Load Balancing", "Distribuye automáticamente el tráfico entrante entre varios destinos", $sprite="img:./icons/alb.png{scale=0.2}")
+
         System_Boundary(aws_zd, "Zona de Disponibilidad 1") {
-            System_Boundary(aws_gateway, "Nat Gateway") {
+            System_Boundary(aws_gateway, "Nat Gateway \n'servicio de traducción de direcciones de red (NAT). Puede \nutilizar una gateway NAT para que las instancias de una \nsubred privada puedan conectarse a servicios fuera de la VPC'") {
+
+                System_Boundary(aws_auth, "Auth") {
+                    Container(aws_identity, "Autenticación y Autorización", "Amazon API Gateway", "Administrar el acceso, mantenimiento, monitorie y proteccion a los recursos y servicios de manera segura.", $sprite="img:./icons/APIGateway.png{scale=0.1}")
+                    Container(aws_lambda, "Lambda Auth", "AWS Lambda", "Autorizador de Lambda como caracteristica de API Gateway que utilizara función de Lambda para controlar el acceso a las API.", $sprite="img:./icons/AWSLambda.png{scale=0.05}")
+                }
+
                 Container(aws_ec2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.png{scale=1}")
-                Container(aws_rds, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.png{scale=1}")
-                Container(aws_efs, "Amazon EFS", $sprite="img:./icons/efs.png{scale=0.2}")
+                
+                System_Boundary(amazon_ec2, "Nodos Cubernetes") {
+                    Container(api, "API RESTful Application", "C#, NET Core 5.0, DDD", "Proporciona o maneja la funcionalidad para la logica del negocio a través de las API's JSON/HTTPS.", $sprite="dotnetcore")
+                }
+                
+                Container(aws_rds, "Amazon RDS for SQL Server", "Contiene la informacion de clientes asesores y técnicos", $sprite="img:./icons/rds.png{scale=1}")
+                Container(dbmongo, "NoSQL Data Store", "MongoDB", "Contiene historial de los servicios prestados, de clientes, asesores y técnicos. 'Logs'", $sprite="mongodb_wordmark")
+                Container(aws_efs, "Amazon EFS", "Sistema para el manejo y administracion de archivos.", $sprite="img:./icons/efs.png{scale=0.2}")
+
+                Container(aws_notification, "Sistema de Notificación", "Amazon Simple Notification Service", "Servicio de mensajería para la comunicación aplicación a aplicación (A2A) y aplicación a persona (A2P).", $sprite="img:./icons/AWSSNS.png{scale=0.05}")
+                Container(aws_location, "Amazon Location Service", "Permite crear aplicaciones que proporcionen mapas y puntos de interés, conviertan las direcciones de las calles en coordenadas geográficas, calculen rutas, hagan seguimiento de los recursos y desencadenen acciones basadas en la ubicación.", $sprite="img:./icons/aws-ls.png{scale=1}")
+
             }
         }
+        
         System_Boundary(aws_zd2, "Zona de Disponibilidad 2") {
-            System_Boundary(aws_gateway_d2, "Nat Gateway") {
+            System_Boundary(aws_gateway_d2, "Nat Gateway \n'servicio de traducción de direcciones de red (NAT). Puede \nutilizar una gateway NAT para que las instancias de una \nsubred privada puedan conectarse a servicios fuera de la VPC'") {
+                
+                System_Boundary(aws_auth_d2, "Auth") {
+                    Container(aws_identity_d2, "Autenticación y Autorización", "Amazon API Gateway", "Administrar el acceso, mantenimiento, monitorie y proteccion a los recursos y servicios de manera segura.", $sprite="img:./icons/APIGateway.png{scale=0.1}")
+                    Container(aws_lambda_d2, "Lambda Auth", "AWS Lambda", "Autorizador de Lambda como caracteristica de API Gateway que utilizara función de Lambda para controlar el acceso a las API.", $sprite="img:./icons/AWSLambda.png{scale=0.05}")
+                }
+
                 Container(aws_ec2_d2, "Amazon EC2", "Nodos Cubernetes", "Capacidad de computación segura y de tamaño ajustable para prácticamente cualquier carga de trabajo", $sprite="img:./icons/ec2.png{scale=1}")
-                Container(aws_rds_d2, "Amazon RDS for SQL Server", $sprite="img:./icons/rds.png{scale=1}")
-                Container(aws_efs_d2, "Amazon EFS", $sprite="img:./icons/efs.png{scale=0.2}")
+                
+                System_Boundary(amazon_ec2_d2, "Nodos Cubernetes") {
+                    Container(api_d2, "API RESTful Application", "C#, NET Core 5.0, DDD", "Proporciona o maneja la funcionalidad para la logica del negocio a través de las API's JSON/HTTPS.", $sprite="dotnetcore")
+                }
+
+                Container(aws_rds_d2, "Amazon RDS for SQL Server", , "Contiene la informacion de clientes asesores y técnicos", $sprite="img:./icons/rds.png{scale=1}")
+                Container(dbmongo_d2, "NoSQL Data Store", "MongoDB", "Contiene historial de los servicios prestados, de clientes, asesores y técnicos. 'Logs'", $sprite="mongodb_wordmark")
+                Container(aws_efs_d2, "Amazon EFS", "Amazon EFS", "Sistema para el manejo y administracion de archivos.", $sprite="img:./icons/efs.png{scale=0.2}")
+
+                Container(aws_notification_d2, "Sistema de Notificación", "Amazon Simple Notification Service", "Servicio de mensajería para la comunicación aplicación a aplicación (A2A) y aplicación a persona (A2P).", $sprite="img:./icons/AWSSNS.png{scale=0.05}")
+                Container(aws_location_d2, "Amazon Location Service", "Permite crear aplicaciones que proporcionen mapas y puntos de interés, conviertan las direcciones de las calles en coordenadas geográficas, calculen rutas, hagan seguimiento de los recursos y desencadenen acciones basadas en la ubicación.", $sprite="img:./icons/aws-ls.png{scale=1}")
+
             }
         }
+
     }
 }
 
-System_Boundary(amazon_ec2, "Nodos Cubernetes") {
-    System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura", $sprite="https")
-    Container(api, "API REST", "C#, NET Core 5.0 DDD", "Maneja toda la lógica de negocios", $sprite="dotnetcore")
-    Container(notification, "Notificación", "Software System", "Sistema que notifica los soportes como las asignaciones", $sprite="envelope_open_text")
-
-}
-
+Rel(user, aws_connect, "Llamada y Chat")
+Rel(aws_connect, adviser, "Recepcion")
 
 Rel(user, aws_waf, "Usar", "https")
 Rel(adviser, aws_waf, "Usar", "https")
 Rel(technical, aws_waf, "Usar", "https")
 
-Rel(aws_waf, aws_cloudfront, "Usar", "")
+Rel(aws_waf, aws_cloudfront, "accede")
 
-Rel(aws_cloudfront, amazon_cloudfront, "contiene", "")
+Rel(aws_cloudfront, amazon_cloudfront, "contiene")
 
-Rel_R(aws_cloudfront, aws_alb, "", "")
+Rel(aws_cloudfront, aws_alb, "accede")
+Rel(aws_alb, aws_auth, "accede")
+Rel(aws_alb, aws_auth_d2, "accede")
 
-Rel(aws_alb, aws_ec2, "", "")
-Rel(aws_alb, aws_ec2_d2, "", "")
+Rel_R(aws_lambda, aws_identity, "Politica de acceso")
+Rel_R(aws_identity, aws_lambda, "Token valido de acceso")
 
-Rel_R(aws_ec2, aws_rds, "", "")
-Rel(aws_ec2, aws_efs, "", "")
-Rel_R(aws_ec2_d2, aws_rds_d2, "", "")
-Rel(aws_ec2_d2, aws_efs_d2, "", "")
+Rel(aws_auth, aws_ec2, "accede")
+Rel(aws_auth_d2, aws_ec2_d2, "accede")
 
-Rel_R(aws_ec2, amazon_ec2, "contiene", "")
-Rel_R(aws_ec2_d2, amazon_ec2, "contiene", "")
+Rel_R(aws_ec2, aws_rds, "Lectura/Escritura")
+Rel_L(aws_ec2, dbmongo, "Lectura/Escritura")
+Rel(aws_ec2, aws_efs, "Lectura/Escritura")
+Rel_R(aws_ec2_d2, aws_rds_d2, "Lectura/Escritura")
+Rel_L(aws_ec2_d2, dbmongo_d2, "Lectura/Escritura")
+Rel(aws_ec2_d2, aws_efs_d2, "Lectura/Escritura")
+
+Rel(aws_ec2, amazon_ec2, "contiene")
+Rel(aws_ec2_d2, amazon_ec2_d2, "contiene")
+
+Rel(aws_ec2, aws_notification, "Usar")
+Rel(aws_ec2_d2, aws_notification_d2, "Usar")
+
+Rel(aws_ec2, aws_location, "Usar")
+Rel(aws_ec2_d2, aws_location_d2, "Usar")
+
+Rel(aws_notification, user, "Envio de SMS, push móvil y correo electrónico")
+Rel(aws_notification, technical, "Envio de SMS, push móvil y correo electrónico")
+
+Rel(aws_notification_d2, user, "Envio de SMS, push móvil y correo electrónico")
+Rel(aws_notification_d2, technical, "Envio de SMS, push móvil y correo electrónico")
 
 
-
-Rel(identity, api, "Autentificación por token", "https")
-
-Rel_R(api, notification, "Usar el sistema de email")
 
 
 @enduml
