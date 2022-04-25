@@ -1,0 +1,82 @@
+@startuml Diagrama de Componentes
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS_2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
+
+!include DEVICONS/angular.puml
+!include DEVICONS/android.puml
+
+!include DEVICONS_2/microsoftsqlserver_wordmark.puml
+!include DEVICONS_2/dotnetcore.puml
+!include DEVICONS_2/mongodb_wordmark.puml
+
+!include FONTAWESOME/server.puml
+
+!include MATERIAL/https.puml
+
+AddElementTag("cache", $bgColor="#444444", $borderColor="#444444")
+
+System_Boundary(app, "Apps") {
+    Container(web_app, "Single-Page Application", "TypeScript, Angular, NodeJS", "Proporciona la funcionalidad para la gestión tanto a los clientes, asesores y tecnicos.", $sprite="angular")
+    Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "Proporciona la funcionalidad para la gestión tanto a los clientes, asesores y tecnicos.", $sprite="android")
+}
+
+Container(identity, "Autenticación y Autorización", "Amazon API Gateway", "Administrar el acceso, mantenimiento, monitorie y proteccion a los recursos y servicios de manera segura.", $sprite="img:./icons/APIGateway.png{scale=0.1}")
+Container(lambda, "Lambda Auth", "AWS Lambda", "Autorizador de Lambda como caracteristica de API Gateway que utilizara función de Lambda para controlar el acceso a las API.", $sprite="img:./icons/AWSLambda.png{scale=0.05}")
+
+Container(notification, "Sistema de Notificación", "Amazon Simple Notification Service", "Servicio de mensajería para la comunicación aplicación a aplicación (A2A) y aplicación a persona (A2P).", $sprite="img:./icons/AWSSNS.png{scale=0.05}")
+Container(awsLocation, "Amazon Location Service", "Permite crear aplicaciones que proporcionen mapas y puntos de interés, conviertan las direcciones de las calles en coordenadas geográficas, calculen rutas, hagan seguimiento de los recursos y desencadenen acciones basadas en la ubicación.", $sprite="img:./icons/aws-ls.png{scale=1}")
+
+System_Boundary(apiManagement, "API Management Platform") {    
+    Container(api, "API RESTful Application", "C#, NET Core 5.0, DDD", "Proporciona o maneja la funcionalidad para la logica del negocio a través de las API's JSON/HTTPS.", $sprite="dotnetcore")
+    Container(cache, "Cache System", "Amazon ElastiCache", "Sistema para el manejo y administracion de cache.", $tags="cache", $sprite="img:./icons/AmazonElastiCache.png{scale=0.05}")
+    System_Boundary(microservicios, "Microservicios") {
+        Container(micro1, "Microservicios #1", "Notification Service", $sprite="server")
+        Container(micro2, "Microservicios #2", "Client Service", $sprite="server")
+        Container(micro3, "Microservicios #3", "Adviser Service", $sprite="server")
+        Container(micro4, "Microservicios #4", "Technical Service", $sprite="server")
+        Container(micro5, "Microservicios #5", "Log Service", $sprite="server")
+        Container(micro6, "Microservicios #6", "File Service", $sprite="server")
+        Container(micro7, "Microservicios #7", "Location Service", $sprite="server")
+    }
+}
+
+System_Boundary(dbStore, "Data Store") {    
+    ContainerDb(db, "Relational Database", "Microsoft SQL", "Contiene la informacion de clientes asesores y técnicos.", $sprite="microsoftsqlserver_wordmark")
+    ContainerDb(dbmongo, "NoSQL Data Store", "MongoDB", "Contiene las información de historial de los servicios prestados de clientes, como la información de gestión de asesores y técnicos.", $sprite="mongodb_wordmark")
+    Container(fileSytem, "File System", "Amazon Elastic File System", "Sistema para el manejo y administracion de archivos.", $sprite="server")
+}
+
+Rel_D(web_app, identity, "Usar", "https")
+Rel_D(mobile_app, identity, "Usar", "https")
+
+Rel_R(identity, lambda, "Token valido de acceso")
+Rel_L(lambda, identity, "Politica de acceso")
+
+Rel(identity, api, "Autentificación/Autorización", "https")
+
+Rel_L(api, notification, "Usar")
+Rel_L(api, awsLocation, "Usar")
+
+Rel_R(api, cache, "Usar")
+Rel_L(cache, api, "Usar")
+
+Rel_D(api, micro1, "RESTful")
+Rel_D(api, micro2, "RESTful")
+Rel_D(api, micro3, "RESTful")
+Rel_D(api, micro4, "RESTful")
+Rel_D(api, micro5, "RESTful")
+Rel_D(api, micro6, "RESTful")
+Rel_D(api, micro7, "RESTful")
+
+Rel_D(micro2, db, "Lectura/Escritura")
+Rel_D(micro3, db, "Lectura/Escritura")
+Rel_D(micro4, db, "Lectura/Escritura")
+Rel_D(micro5, dbmongo, "Lectura/Escritura")
+Rel_D(micro6, fileSytem, "Lectura/Escritura")
+
+@enduml

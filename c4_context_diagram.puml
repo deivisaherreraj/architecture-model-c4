@@ -5,6 +5,7 @@
 !define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
 !define DEVICONS_2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
 !define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/material
 
 !include DEVICONS/angular.puml
 !include DEVICONS/android.puml
@@ -16,35 +17,50 @@
 !include FONTAWESOME/viber.puml
 !include FONTAWESOME/envelope_open_text.puml
 
-Person(user, "Clientes", "Cliente que requiere soporte tecnico", $sprite="users")
-Person(adviser, "Asesores", "Personal que realiza la gestión de llamadas de soporte técnico", $sprite="user_tie")
-Person(technical, "Técnicos", "Personal que realiza el soporte técnico informado", $sprite="users_cog")
+!include MATERIAL/https.puml
 
-System_Boundary(app, "Software System") {
-    Container(web_app, "Web Application", "C#, NET Core 5.0 DDD", "La interfaz principal con la que interactua el cliente", $sprite="angular")
-    Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "La interfaz móvil que interactua tanto el cliente como asesor", $sprite="android")
-    Container(admin_app, "Administrative System", "angular", "La interfaz de administrador para la gestión del cliente y tecnico", $sprite="angular")
+Person(user, "Clientes", "Cliente que requiere soporte tecnico.", $sprite="users")
+Person(adviser, "Asesores", "Personal que realiza la gestión del soporte técnico.", $sprite="user_tie")
+Person(technical, "Técnicos", "Personal que realiza el soporte técnico informado.", $sprite="users_cog")
+
+System_Boundary(app, "Apps") {
+    Container(web_app, "Single-Page Application", "TypeScript, Angular, NodeJS", "Proporciona la funcionalidad para la gestión tanto a los clientes, asesores y tecnicos.", $sprite="angular")
+    Container(mobile_app, "Mobile App", "C#, Xamarin Forms MVVM", "Proporciona la funcionalidad para la gestión tanto a los clientes, asesores y tecnicos.", $sprite="android")
 }
 
-System(identity, "Autenticación y Autorización", "Administrar el acceso a los recursos y servicios de manera segura")
+Container(connect, "Call Center", "Amazon Connect", "Servicio como centro de contacto para las gestión de llamadas y contacto por chat y voz.", $sprite="img:./icons/AmazonConnect.png{scale=0.03}")
 
-Container(api, "API REST", "C#, NET Core 5.0 DDD", "Maneja toda la lógica de negocios", $sprite="dotnetcore")
-Container(notification, "Notificación", "Software System", "Sistema que notifica los soportes como las asignaciones", $sprite="envelope_open_text")
+System_Boundary(auth, "Auth") {
+    Container(identity, "Autenticación y Autorización", "Amazon API Gateway", "Administrar el acceso, mantenimiento, monitorie y proteccion a los recursos y servicios de manera segura.", $sprite="img:./icons/APIGateway.png{scale=0.1}")
+    Container(lambda, "Lambda Auth", "AWS Lambda", "Autorizador de Lambda como caracteristica de API Gateway que utilizara función de Lambda para controlar el acceso a las API.", $sprite="img:./icons/AWSLambda.png{scale=0.05}")
+}
+
+Container(api, "API RESTful Application", "C#, NET Core 5.0, DDD", "Proporciona o maneja la funcionalidad para la logica del negocio a través de las API's JSON/HTTPS.", $sprite="dotnetcore")
+Container(notification, "Sistema de Notificación", "Amazon Simple Notification Service", "Servicio de mensajería para la comunicación aplicación a aplicación (A2A) y aplicación a persona (A2P).", $sprite="img:./icons/AWSSNS.png{scale=0.05}")
 
 Rel(user, web_app, "Usar", "https")
 Rel(user, mobile_app, "Usar", "https")
 
-Rel(adviser, mobile_app, "Gestión", "https")
-Rel(adviser, admin_app, "Gestión", "https")
+Rel_L(adviser, web_app, "Usar", "https")
+Rel_L(adviser, mobile_app, "Usar", "https")
 
-Rel(web_app, identity, "Usar", "https")
-Rel(mobile_app, identity, "Usar", "https")
-Rel(admin_app, identity, "Usar", "https")
+Rel(technical, web_app, "Usar", "https")
+Rel(technical, mobile_app, "Usar", "https")
 
-Rel(identity, api, "Autentificación por token", "https")
+Rel_D(web_app, identity, "Usar", "https")
+Rel_D(mobile_app, identity, "Usar", "https")
 
-Rel_R(api, notification, "Usar el sistema de email")
+Rel_R(user, connect, "Llamada y Chat")
+Rel_D(connect, adviser, "Recepcion")
 
-Rel_R(notification, technical, "Notificar asignación")
+Rel_R(identity, lambda, "Token valido de acceso")
+Rel_L(lambda, identity, "Politica de acceso")
+
+Rel_L(identity, api, "Autentificación por token")
+
+Rel_U(api, notification, "Usar")
+
+Rel_R(notification, user, "Envio de SMS, push móvil y correo electrónico")
+Rel_R(notification, technical, "Envio de SMS, push móvil y correo electrónico")
 
 @enduml
