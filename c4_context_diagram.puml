@@ -40,23 +40,25 @@ Container(notification, "Sistema de Notificación", "Amazon Simple Notification 
 
 Rel(user, web_app, "Usar", "https")
 Rel(user, mobile_app, "Usar", "https")
-Rel(adviser, web_app, "Usar", "https")
-Rel(adviser, mobile_app, "Usar", "https")
+
+Rel_L(adviser, web_app, "Usar", "https")
+Rel_L(adviser, mobile_app, "Usar", "https")
+
 Rel(technical, web_app, "Usar", "https")
 Rel(technical, mobile_app, "Usar", "https")
 
-Rel(web_app, identity, "Usar", "https")
-Rel(mobile_app, identity, "Usar", "https")
+Rel_D(web_app, identity, "Usar", "https")
+Rel_D(mobile_app, identity, "Usar", "https")
 
-Rel(user, connect, "Llamada y Chat")
-Rel(connect, adviser, "Recepcion")
+Rel_R(user, connect, "Llamada y Chat")
+Rel_D(connect, adviser, "Recepcion")
 
-Rel(identity, lambda, "Token valido de acceso")
-Rel(lambda, identity, "Politica de acceso")
+Rel_R(identity, lambda, "Token valido de acceso")
+Rel_L(lambda, identity, "Politica de acceso")
 
-Rel(identity, api, "Autentificación por token")
+Rel_L(identity, api, "Autentificación por token")
 
-Rel_R(api, notification, "Usar")
+Rel_U(api, notification, "Usar")
 
 Rel_R(notification, user, "Envio de SMS, push móvil y correo electrónico")
 Rel_R(notification, technical, "Envio de SMS, push móvil y correo electrónico")
