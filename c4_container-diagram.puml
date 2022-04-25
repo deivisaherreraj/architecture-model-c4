@@ -16,8 +16,11 @@
 !include FONTAWESOME/users_cog.puml
 !include FONTAWESOME/viber.puml
 !include FONTAWESOME/envelope_open_text.puml
+!include DEVICONS_2/mongodb_wordmark.puml
 
 !include MATERIAL/https.puml
+
+AddElementTag("cache", $bgColor="#444444", $borderColor="#444444")
 
 Person(user, "Clientes", "Cliente que requiere soporte tecnico", $sprite="users")
 Person(adviser, "Asesores", "Personal que realiza la gestión de llamadas de soporte técnico", $sprite="user_tie")
@@ -53,7 +56,8 @@ System_Boundary(aws_vpc, "Amazon Virtual Private Cloud \n'(Amazon VPC) le brinda
                 System_Boundary(amazon_ec2, "Nodos Cubernetes") {
                     Container(api, "API RESTful Application", "C#, NET Core 5.0, DDD", "Proporciona o maneja la funcionalidad para la logica del negocio a través de las API's JSON/HTTPS.", $sprite="dotnetcore")
                 }
-                
+
+                Container(aws_elc, "Amazon ElastiCache", "Servicio de almacenamiento de caché en memoria completamente administrado que admite casos de uso flexibles y en tiempo real.", $tags="cache", $sprite="img:./icons/AmazonElastiCache.png{scale=0.05}")
                 Container(aws_rds, "Amazon RDS for SQL Server", "Contiene la informacion de clientes asesores y técnicos", $sprite="img:./icons/rds.png{scale=1}")
                 Container(dbmongo, "NoSQL Data Store", "MongoDB", "Contiene historial de los servicios prestados, de clientes, asesores y técnicos. 'Logs'", $sprite="mongodb_wordmark")
                 Container(aws_efs, "Amazon EFS", "Sistema para el manejo y administracion de archivos.", $sprite="img:./icons/efs.png{scale=0.2}")
@@ -78,6 +82,7 @@ System_Boundary(aws_vpc, "Amazon Virtual Private Cloud \n'(Amazon VPC) le brinda
                     Container(api_d2, "API RESTful Application", "C#, NET Core 5.0, DDD", "Proporciona o maneja la funcionalidad para la logica del negocio a través de las API's JSON/HTTPS.", $sprite="dotnetcore")
                 }
 
+                Container(aws_elc_d2, "Amazon ElastiCache", "Servicio de almacenamiento de caché en memoria completamente administrado que admite casos de uso flexibles y en tiempo real.", $tags="cache", $sprite="img:./icons/AmazonElastiCache.png{scale=0.05}")
                 Container(aws_rds_d2, "Amazon RDS for SQL Server", , "Contiene la informacion de clientes asesores y técnicos", $sprite="img:./icons/rds.png{scale=1}")
                 Container(dbmongo_d2, "NoSQL Data Store", "MongoDB", "Contiene historial de los servicios prestados, de clientes, asesores y técnicos. 'Logs'", $sprite="mongodb_wordmark")
                 Container(aws_efs_d2, "Amazon EFS", "Amazon EFS", "Sistema para el manejo y administracion de archivos.", $sprite="img:./icons/efs.png{scale=0.2}")
@@ -100,7 +105,7 @@ Rel(technical, aws_waf, "Usar", "https")
 
 Rel(aws_waf, aws_cloudfront, "accede")
 
-Rel(aws_cloudfront, amazon_cloudfront, "contiene")
+Rel_D(aws_cloudfront, amazon_cloudfront, "contiene")
 
 Rel(aws_cloudfront, aws_alb, "accede")
 Rel(aws_alb, aws_auth, "accede")
@@ -112,9 +117,12 @@ Rel_R(aws_identity, aws_lambda, "Token valido de acceso")
 Rel(aws_auth, aws_ec2, "accede")
 Rel(aws_auth_d2, aws_ec2_d2, "accede")
 
+Rel(aws_ec2, aws_elc, "Lectura/Escritura")
 Rel_R(aws_ec2, aws_rds, "Lectura/Escritura")
 Rel_L(aws_ec2, dbmongo, "Lectura/Escritura")
 Rel(aws_ec2, aws_efs, "Lectura/Escritura")
+
+Rel(aws_ec2_d2, aws_elc_d2, "Lectura/Escritura")
 Rel_R(aws_ec2_d2, aws_rds_d2, "Lectura/Escritura")
 Rel_L(aws_ec2_d2, dbmongo_d2, "Lectura/Escritura")
 Rel(aws_ec2_d2, aws_efs_d2, "Lectura/Escritura")
